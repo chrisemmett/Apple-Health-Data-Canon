@@ -65,7 +65,7 @@ struct ContentView: View {
         } header: {
             Text("Authorization")
         } footer: {
-            Text("Grants write access for workouts, heart rate, active energy and distance. This tool never reads your data.")
+            Text("Grants write access for workouts, heart rate, active energy, distance and outdoor GPS routes. This tool never reads your data.")
         }
     }
 
@@ -103,7 +103,7 @@ struct ContentView: View {
         } header: {
             Text("Generate Sample Data")
         } footer: {
-            Text("Creates a varied history of synthetic workouts — runs, walks, cycles, strength and HIIT — with matching heart-rate, energy and distance samples.")
+            Text("Creates a varied history of synthetic workouts — runs, walks, cycles, strength and HIIT — with matching heart-rate, energy and distance samples. Outdoor runs, walks and cycles also get a mock GPS route around London.")
         }
     }
 
@@ -126,7 +126,7 @@ struct ContentView: View {
                 }
                 Button("Cancel", role: .cancel) {}
             } message: {
-                Text("This removes all workouts, heart-rate, energy and distance samples that Health Data Canon has written. HealthKit only allows deleting this app's own data.")
+                Text("This removes all workouts, heart-rate, energy, distance and GPS route samples that Health Data Canon has written. HealthKit only allows deleting this app's own data.")
             }
         } header: {
             Text("Clean Up")

@@ -12,6 +12,7 @@
 //  across actors freely.
 //
 
+import CoreLocation
 import Foundation
 import HealthKit
 
@@ -54,6 +55,8 @@ struct HealthKitService: @unchecked Sendable {
     private var managedTypes: [HKSampleType] {
         var types: [HKSampleType] = [HKObjectType.workoutType()]
         types.append(contentsOf: quantityTypes)
+        // GPS tracks for outdoor workouts are stored as a route *series*.
+        types.append(HKSeriesType.workoutRoute())
         return types
     }
 
@@ -104,9 +107,37 @@ struct HealthKitService: @unchecked Sendable {
 
         try await builder.endCollection(at: blueprint.end)
 
-        guard try await builder.finishWorkout() != nil else {
+        guard let workout = try await builder.finishWorkout() else {
             throw HealthKitError.workoutSaveFailed
         }
+
+        // Attach a GPS track to outdoor workouts. The route is a separate series
+        // associated with the finished workout, mirroring how the Fitness app
+        // stores real outdoor activity locations.
+        if let route = blueprint.route, !route.isEmpty {
+            try await saveRoute(route, start: blueprint.start, for: workout)
+        }
+    }
+
+    /// Builds an `HKWorkoutRoute` from the blueprint's synthetic GPS fixes and
+    /// links it to the just-saved workout.
+    private func saveRoute(_ points: [RoutePoint], start: Date, for workout: HKWorkout) async throws {
+        let routeBuilder = HKWorkoutRouteBuilder(healthStore: healthStore, device: .local())
+
+        let locations = points.map { point in
+            CLLocation(
+                coordinate: CLLocationCoordinate2D(latitude: point.latitude, longitude: point.longitude),
+                altitude: point.altitude,
+                horizontalAccuracy: point.horizontalAccuracy,
+                verticalAccuracy: 4,
+                course: point.course,
+                speed: point.speed,
+                timestamp: start.addingTimeInterval(point.timeOffset)
+            )
+        }
+
+        try await routeBuilder.insertRouteData(locations)
+        try await routeBuilder.finishRoute(with: workout, metadata: nil)
     }
 
     // MARK: Delete

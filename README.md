@@ -16,6 +16,10 @@ accumulate real workouts on a physical device.
 - **Generates sample workouts** — runs, walks, cycles, strength and HIIT
   sessions spread realistically across a configurable number of days, each with
   matching heart-rate, active-energy and distance samples.
+- **Mocks outdoor GPS routes** — outdoor runs, walks and cycles get a synthetic
+  `HKWorkoutRoute` that wanders through a real London green space (Hyde Park,
+  Richmond Park, Hampstead Heath, the Thames Path…) and roughly matches the
+  workout's distance and duration, so map-based features have data to render.
 - **Cleans up after itself** — deletes every sample the app has written.
   HealthKit only allows an app to delete its *own* data, so data from you or
   other apps is never touched.
@@ -43,9 +47,24 @@ Each workout is saved with a `HKWorkoutBuilder` and carries:
 - **Active energy burned**, split evenly across the workout duration.
 - **Distance** (walking/running or cycling) for distance-based activities;
   strength and HIIT record none.
+- **A GPS route** for outdoor activities — a `HKWorkoutRoute` series of
+  timestamped `CLLocation` fixes (with altitude, speed and course). Indoor
+  strength and HIIT sessions record no location.
 
 Per-kind ranges (duration, calories, distance and heart rate) live in
 `WorkoutPlanner` in [`WorkoutPlan.swift`](Health%20Data%20Canon/WorkoutPlan.swift).
+
+### Mock GPS routes
+
+`LondonRouteGenerator` (also in
+[`WorkoutPlan.swift`](Health%20Data%20Canon/WorkoutPlan.swift)) fabricates each
+outdoor track as a *correlated random walk*: it starts from a random London
+landmark, nudges its heading a little on every step so the path curves like a
+real one, and gently steers back toward the start in the second half so the
+route closes into a loose loop. Step length is pinned to the workout's distance
+and points are timestamped so their speed matches distance ÷ duration.
+`HealthKitService` converts the points to `CLLocation`s and saves them with
+`HKWorkoutRouteBuilder`, linking the route to the finished workout.
 
 ## Architecture
 

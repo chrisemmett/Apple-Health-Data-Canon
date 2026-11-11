@@ -26,3 +26,6 @@ Carthage/Build/
 # Fastlane
 fastlane/report.xml
 fastlane/screenshots/
+
+# Personal signing settings (Team ID, bundle ID) — see Config/Local.xcconfig.example
+Config/Local.xcconfig

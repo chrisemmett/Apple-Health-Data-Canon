@@ -1,0 +1,12 @@
+// Local.xcconfig — your personal signing settings. NEVER commit this file.
+//
+// Setup:
+//   cp Config/Local.xcconfig.example Config/Local.xcconfig
+// then fill in the values below. Config/Local.xcconfig is git-ignored.
+
+// Your 10-character Team ID, from developer.apple.com → Account → Membership
+// details, or Xcode → Settings → Accounts.
+DEVELOPMENT_TEAM = ABCDE12345
+
+// A bundle identifier under a domain you control.
+PRODUCT_BUNDLE_IDENTIFIER = com.yourname.HealthDataCanon

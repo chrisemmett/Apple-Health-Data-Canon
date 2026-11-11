@@ -101,3 +101,22 @@ The code separates *what* to generate from *how* to save it:
 5. Adjust the history and per-day settings, then tap **Generate Sample
    Workouts**.
 6. Use **Delete All Generated Data** to wipe everything the app has written.
+
+### Code signing
+
+Simulator builds need no setup. To run on a device, put your signing details
+in a local, git-ignored config file rather than in the project:
+
+```sh
+cp Config/Local.xcconfig.example Config/Local.xcconfig
+```
+
+Then set `DEVELOPMENT_TEAM` (your 10-character Team ID) and
+`PRODUCT_BUNDLE_IDENTIFIER` (an identifier under a domain you own) in
+`Config/Local.xcconfig`. The tracked `Config/Signing.xcconfig` holds only empty
+or placeholder defaults and includes `Local.xcconfig` if it exists.
+
+Don't pick a team under *Signing & Capabilities* in Xcode: that writes your
+Team ID into `project.pbxproj`, which is committed, and it overrides the
+xcconfig. If Xcode does add a `DEVELOPMENT_TEAM` line there, delete it before
+committing.

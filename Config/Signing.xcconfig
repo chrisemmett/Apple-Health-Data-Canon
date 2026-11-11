@@ -1,0 +1,17 @@
+// Signing.xcconfig — tracked, shared signing defaults.
+//
+// Do NOT put your Apple Developer Team ID or personal bundle identifier here.
+// Copy Local.xcconfig.example to Local.xcconfig (git-ignored) and set them
+// there; it is included at the bottom and overrides these defaults.
+
+// Left empty so the repository never carries a Team ID. Simulator builds work
+// without one; device builds need a value in Local.xcconfig.
+DEVELOPMENT_TEAM =
+
+// Placeholder identifier. Override in Local.xcconfig with one you own if you
+// sign for a device, since com.example.* cannot be registered.
+PRODUCT_BUNDLE_IDENTIFIER = com.example.HealthDataCanon
+
+// Optional, machine-specific overrides. The `?` makes the include silently
+// skip when the file does not exist (e.g. fresh clones and CI).
+#include? "Local.xcconfig"
